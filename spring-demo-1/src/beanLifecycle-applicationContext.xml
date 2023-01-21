@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:src/sport.properties"/>
+    <!-- Define your beans here -->
+    <bean id="myCoach" class="src.coach.CricketCoach" scope="prototype" init-method="setId" destroy-method="cleanUpAttributes">
+        <!-- <constructor-arg ref="myFortune"/> -->
+        <property name="email" value="${foo.email}"></property>
+        <property name="team" value="${foo.team}"></property>
+        <property name="fortuneService" ref="myFortune"></property>
+    </bean>
+    <bean id="myFortune" class="src.fortune.HappyFortuneService"></bean>
+</beans>
