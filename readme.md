@@ -22,6 +22,7 @@ Primary functions is
 </beans>
 ```
 The **id** is like an alias
+
 The **class** is fully qualified class name of implementation class
 
 2. Create spring container
@@ -37,6 +38,7 @@ ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("app
 Coach theCoach = context.getBean("myCoach", Coach.class);
 ```
 myCoach is referring to the id of the bean
+
 Coach.class is referring to the interface that implemented by the BaseballCoach class
 
 ## Section 5: Spring Dependency Injection - XML Configuration
@@ -135,6 +137,7 @@ You can add custom code during **bean initialization** or **bean destruction**
 ```
 
 init-method: set up bean initialization, you can put any method name
+
 destroy-method: set up bean destroy method, you can put any method name
 
 
@@ -199,4 +202,6 @@ If we don't specify the bean ID, spring will generate the default Bean ID.
 3. Retrieve bean from spring container
 Same coding as before...
 
+```java
 Coach theCoach = context.getBean("thatSillyCoach", Coach.class);
+```
