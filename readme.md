@@ -205,3 +205,139 @@ Same coding as before...
 ```java
 Coach theCoach = context.getBean("thatSillyCoach", Coach.class);
 ```
+
+## Section 8: Spring Configuration with Java Annotations - Dependency Injection
+
+### Autowiring
+For dependency injection, spring can use autowiring. Spring will look for a class that matches the property (matches by type: class or interface). Spring will inject it automatically, hence it is autowired.
+
+@Autowired inject any dependencies by calling ANY method on your class
+
+### Autowiring injection types
+- Constructor injection
+- Setter injection
+- Field injection
+
+#### Constructor injection
+1. Define the dependency interface and class
+
+```java
+public interface FortuneService {
+    public String getFortune();
+}
+
+@Component
+public class HappyFortuneService implements FortuneService{
+    public String getFortune(){
+        return "Today is your lucky day";
+    }
+}
+```
+
+2. Create a constructor in your class for injections
+
+```java
+@Component
+public class TennisCoach implements Coach{
+    private FortuneService fortuneService;
+
+    public TennisCoach(FortuneService fortuneService){
+        this.fortuneService = fortuneService;
+    }
+}
+```
+
+3. Configure the dependency injection with **@Autowired** annotation
+
+Spring will scan for a component that implements FortuneService interface
+
+```java
+@Component
+public class TennisCoach implements Coach{
+    private FortuneService fortuneService;
+
+    **@Autowired**
+    public TennisCoach(FortuneService fortuneService){
+        this.fortuneService = fortuneService;
+    }
+}
+```
+#### Setter injection
+Inject dependencies by calling setter methods on your class
+
+1. Create setter method(s) in your class for injections
+
+```java
+@Component
+public class TennisCoach implements Coach{
+    private FortuneService fortuneService;
+    
+    public TennisCoach(){}
+
+    public void setFortuneService(FortuneService fortuneService){
+        this.fortuneService = fortuneService;
+    }
+}
+```
+
+2. Configure the dependency injection with **@Autowired** annotation
+
+```java
+@Component
+public class TennisCoach implements Coach{
+    private FortuneService fortuneService;
+    
+    public TennisCoach(){}
+
+    **@Autowired**
+    public void setFortuneService(FortuneService fortuneService){
+        this.fortuneService = fortuneService;
+    }
+}
+```
+
+#### Field injection
+Inject dependencies by setting field values on your class directly (even private fields). Accomplished by using java reflection.
+
+1. Configure the dependency injection with Autowired annotation
+    - Applied directly to the field
+    - No need for setter methods
+
+```java
+@Component
+public class TennisCoach implements Coach{
+
+    **@Autowired**
+    private FortuneService fortuneService;
+    
+    public TennisCoach(){}
+    
+    // ... No need for setter methods
+}
+```
+
+### Qualifier
+Used when there are multiple implementation of an interface. We need to tell specific bean to use. It can be use to any injection types.
+
+```java
+@Qualifier("happyFortuneService")
+```
+
+Specified the bean ID that we want to use
+
+## Section 9: Spring Configuration with Java Annotations - Bean Scopes and Lifecycle Methods
+
+Explicitly specify bean scope
+```java
+@Component
+@Scope("singleton")
+@Scope("prototype")
+public class TennisCoach implements Coach{
+...
+}
+```
+
+Bean lifecycle:
+1. Define your methods for init and destroy
+2. Add annotations: @PostConstruct and @PreDestroy
+ 
