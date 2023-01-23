@@ -10,7 +10,7 @@ import src.fortune.FortuneService;
 public class CricketCoach implements Coach{
     
     @Autowired
-    @Qualifier("happyFortuneService")
+    @Qualifier("sadFortuneService")
     private FortuneService fortuneService;
 
     public CricketCoach(){

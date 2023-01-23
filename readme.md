@@ -341,3 +341,131 @@ Bean lifecycle:
 1. Define your methods for init and destroy
 2. Add annotations: @PostConstruct and @PreDestroy
  
+## Section 11: Spring MVC - Building Spring Web Apps
+
+### Components of a spring MVC application
+- A set of web pages to layout UI components
+- A collection of spring beans (controllers, services, etc...)
+- Spring configuration (XML, annotations or java)
+
+Front controller known as **DispatcherServlet**:
+- Part of the spring framework
+- Already developed by spring dev team
+
+You will create:
+- Model objects
+- View templates
+- Controller classes
+
+#### Controller
+Code created by developer. Contains your business logic:
+- Handle the request 
+- Store/retrieve data (db, web service)
+- Place data in model
+
+And send it to appropriate view template
+
+#### Model
+Contains your data. Store/retrieve data via backend systems:
+- Database, web services, etc...
+- Use a spring bean if you like
+
+Place your data in the model. Data can be any java object/collection
+
+#### View template
+Spring MVC is flexible. Supports many view templates, most common is JSP + JSTL. Views is used to display data
+
+JSP: Java Server Pages
+JSTL: JSP Standard Tag Library
+
+Other view template supported:
+- Thymeleaf, Groovy...
+- Velocity, Freemarker, etc...
+
+### Spring MVC configuration process - part 1
+Add configurations to file: **WEB-INF/web.xml**
+1. Configure spring MVC dispatcher servlet
+2. Set up URL mappings to spring MVC dispatcher servlet
+
+### Spring MVC configuration process - part 2
+Add configurations to file: **WEB-INF/spring-mvc-demo-servlet.xml**
+3. Add support for spring component scanning
+4. Add support for conversion, formatting, and validation
+5. Configure spring MVC view resolver
+
+## Section 12: Spring MVC - Creating Controllers and Views
+Development process:
+1. Create controller class
+2. Define controller method
+3. Add request mapping to controller method
+4. Return view name
+5. Develop view page
+
+### Create controller class
+Annotate a class with @Controller
+@Controller inherits from @Component supports scanning
+
+```java
+@Controller
+public class HomeController{
+
+}
+```
+
+### Define controller method
+
+```java
+@Controller
+public class HomeController{
+    public String showMyPage(){
+        ...
+    }
+}
+```
+
+### Add request mapping to controller method
+
+```java
+@Controller
+public class HomeController{
+
+    @RequestMapping("/")
+    public String showMyPage(){
+        ...
+    }
+}
+```
+
+### Return view name
+
+```java
+@Controller
+public class HomeController{
+
+    @RequestMapping("/")
+    public String showMyPage(){
+        return "main-menu";
+    }
+}
+```
+
+### Develop view page
+
+```html
+<html>
+    <body>
+        <h1>Hello world</h1>
+    </body>
+</html>
+```
+
+### Reading HTML form data
+
+Development process:
+1. Create controller class
+2. Show HTML form
+   - Create controller method to show HTML form
+   - Create view page for html form
+3. Process HTML form
+   - Create controller method to process HTML form
+   - Develop view page for confirmation
