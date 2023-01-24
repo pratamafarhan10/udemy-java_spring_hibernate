@@ -517,3 +517,13 @@ The big picture:
 In spring controller
 - Before you show the form, you must add a model attribute
 - This is a bean that will hold form data for the data binding
+
+Show form - add model attribute
+```java
+@RequestMapping("/showForm")
+public String showForm(Model model){
+    model.addAttribute("student", new Student());
+
+    return "student-form";
+}
+```
