@@ -105,13 +105,13 @@ Explicitly specify the bean scope
 </beans>
 ```
 ### Type of scopes
-| Scope        | Description           | 
-| ------------- |:-------------:| 
-| singleton      | Create a single shared instance of the bean. Default scope | 
-| prototype      | Create a new bean instance for each container request | 
-| request      | Scoped to an HTTP web request. Only used for web apps | 
-| session      | Scoped to an HTTP web session. Only used for web apps | 
-| global-session      | Scoped to a global HTTP web session. Only used for web apps | 
+| Scope          |                         Description                         |
+| -------------- | :---------------------------------------------------------: |
+| singleton      | Create a single shared instance of the bean. Default scope  |
+| prototype      |    Create a new bean instance for each container request    |
+| request        |    Scoped to an HTTP web request. Only used for web apps    |
+| session        |    Scoped to an HTTP web session. Only used for web apps    |
+| global-session | Scoped to a global HTTP web session. Only used for web apps |
 
 ### Bean lifecycle
 
@@ -194,9 +194,9 @@ public class TennisCoach implements Coach{
 ```
 
 If we don't specify the bean ID, spring will generate the default Bean ID.
-| Class Name    | Default Bean ID   | 
-| ------------- |:-----------------:| 
-| TennisCoach   | tennisCoach       |
+| Class Name  | Default Bean ID |
+| ----------- | :-------------: |
+| TennisCoach |   tennisCoach   |
 
 
 3. Retrieve bean from spring container
@@ -469,3 +469,51 @@ Development process:
 3. Process HTML form
    - Create controller method to process HTML form
    - Develop view page for confirmation
+
+### Spring model
+A container for application data. In your controller you can put anyhting in the model (strings, objects, info from database, etc). Your view page can access data from the model
+
+## Section 13: Spring MVC - Request Params and Request Mappings
+Spring has special method to bind request parameter. @RequestParam
+
+```java
+public String letShoutDude(@RequestParam("name") String name, Model model){
+    // ...
+}
+```
+
+### Controller level request mapping
+
+- Serves as parent mapping for controller
+- All request mappings on methods in the controller are relative
+- Similar to folder directory structures
+
+```java
+@RequestMapping("/funny")
+public class FunnyController {
+    @RequestMapping("/showForm") // /funny/showForm
+    public String showForm(){
+        // ...
+    }
+
+    @RequestMapping("/processForm") // /funny/processForm
+    public String process(HttpServletRequest request, Model model){
+        // ...
+    }
+}
+```
+
+## Section 14: Spring MVC - Form Tags and Data Binding
+
+- Spring MVC form tags are the building block for a web page
+- Form tags are configurable and reusable on a web page
+
+### Text fields
+The big picture:
+1. We have a form that submits first name and last name
+2. The controller will retrieve the form values
+3. The controller will show it on another page
+
+In spring controller
+- Before you show the form, you must add a model attribute
+- This is a bean that will hold form data for the data binding
