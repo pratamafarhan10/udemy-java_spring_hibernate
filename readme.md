@@ -526,4 +526,46 @@ public String showForm(Model model){
 
     return "student-form";
 }
+
+@RequestMapping("/processForm")
+public String processForm(@ModelAttribute("student") Student student){
+    return "student/confirmation";
+}
 ```
+
+## Section 15: Spring MVC Form Validation - Applying Built-In Validation Rules
+Bean validation features:
+- Required
+- length
+- numbers
+- regular expression
+- custom validation
+
+annotations:
+- @NotNull: is not null
+- @Min: minimum value
+- @Max: maximum value
+- @Size: match the size
+- @Pattern: regular expression pattern
+- @Future / @Past: DATE must be in future or past of given date
+- @InitBinder: works as a preprocessor, it will pre process each web request to our controller.
+- others...
+
+### Perform validation rules on our object
+
+```java
+@RequestMapping("/processForm")
+public String processForm(@Valid @ModelAttribute() Customer customer, BindingResult theBindingResult){
+    if(theBindingResult.hasErrors()){
+        return "customer-form";
+    }
+
+    return "customer-confirmation";
+}
+```
+
+@Valid: Perform validation rules on our object
+
+BindingResult: Results of validation placed in the BindingResult
+
+**the BindingResult parameter must appear immediately after the model attribute**

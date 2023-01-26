@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Confirm</title>
-</head>
-<body>
-    <h1>The student is confirmed: <span th:text="${student.firstName}"></span> <span th:text="${student.lastName}"></span></h1>
-</body>
+  </head>
+  <body>
+    <h1>
+      The student is confirmed: <span th:text="${student.firstName}" />
+      <span th:text="${student.lastName}" />
+    </h1>
+    <h2>Country: <span th:text="${student.country}" /></h2>
+    <h2>Favorite language: <span th:text="${student.favoriteLanguage}" /></h2>
+    <h2>Operating systems: 
+      <ul>
+        <li th:each="os : ${student.operatingSystems}" th:text="${os}"></li>
+      </ul>
+    </h2>
+  </body>
 </html>

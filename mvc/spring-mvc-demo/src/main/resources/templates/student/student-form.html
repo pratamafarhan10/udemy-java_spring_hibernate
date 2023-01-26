@@ -1,18 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student form</title>
-</head>
-<body>
+  </head>
+  <body>
     <form action="/student/processForm" method="get">
-        <input type="text" name="firstName" placeholder="What's your first name?">
-        <br><br>
-        <input type="text" name="lastName" placeholder="What's your last name?">
-        <br><br>
-        <button type="submit">Submit</button>
+      <input
+        type="text"
+        name="firstName"
+        placeholder="What's your first name?"
+      />
+      <br /><br />
+      <input type="text" name="lastName" placeholder="What's your last name?" />
+      <br /><br />
+      <input type="text" name="school" placeholder="What's your school name?" />
+      <br /><br />
+      <select name="country" id="country">
+        <option
+          th:each="option : ${studentOptions}"
+          th:value="${option.key}"
+          th:text="${option.value}"
+        ></option>
+      </select>
+      <br /><br />
+      <input type="radio" name="favoriteLanguage" id="PHP" value="PHP" />
+      <label for="PHP">PHP</label>
+      <input type="radio" name="favoriteLanguage" id="Java" value="Java" />
+      <label for="Java">Java</label>
+      <input
+        type="radio"
+        name="favoriteLanguage"
+        id="Javascript"
+        value="Javascript"
+      />
+      <label for="Javascript">Javascript</label>
+      <input type="radio" name="favoriteLanguage" value="Golang" id="Golang" />
+      <label for="Golang">Golang</label>
+      <br />
+      <input
+        type="checkbox"
+        name="operatingSystems"
+        id="Windows"
+        value="Windows"
+      />
+      <label for="Windows">Windows</label>
+      <input type="checkbox" name="operatingSystems" id="MacOs" value="MacOs" />
+      <label for="MacOs">MacOs</label>
+      <input type="checkbox" name="operatingSystems" id="Linux" value="Linux" />
+      <label for="Linux">Linux</label>
+      <br />
+      <button type="submit">Submit</button>
     </form>
-</body>
+  </body>
 </html>
