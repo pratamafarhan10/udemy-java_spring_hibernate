@@ -31,6 +31,10 @@ public class CustomerController {
     public String processForm(@Valid @ModelAttribute Customer customer, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", bindingResult.getAllErrors());
+            System.out.println(bindingResult.getFieldError("lastName"));
+            System.out.println(bindingResult.getFieldError("freePasses"));
+            System.out.println(bindingResult.getFieldError("postalCode"));
+            System.out.println(bindingResult.getFieldError("courseCode"));
             return "customer-form";
         }
 

@@ -569,3 +569,90 @@ public String processForm(@Valid @ModelAttribute() Customer customer, BindingRes
 BindingResult: Results of validation placed in the BindingResult
 
 **the BindingResult parameter must appear immediately after the model attribute**
+
+## Section 16: Spring MVC Form Validation - Validating Number Ranges and Regular Expressions
+
+### Custom error messages
+
+Create a file messages.property in resources file.
+
+```text
+typeMistmach.customer.freePasses=Invalid number
+```
+error type -> spring model attribute name -> field name -> custom message
+
+## Section 17: Spring MVC Form Validation - Creating Custom Validation Rules
+
+1. Create @CourseCode annotation
+
+```java
+@Constraint(validatedBy = CourseCodeConstraintValidator.class) // Helper class that contains business rules / validation logic
+@Target( {ElementType.METHOD, ElementType.FIELD} ) // Can apply your annotation to a method or field
+@Retention(RetentionPolicy.RUNTIME) // Retain this annotation in the Java class file. Process it at runtime
+public @interface CourseCode{
+    // This is how you define a custom annotation in java
+
+    // define default course code
+    public String value() default "LUV";
+
+    public String message() default "must start with LUV";
+}
+```
+
+2. Creat CourseCodeConstraintValidator
+
+```java
+package form.validation.demo.validation;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class CourseCodeConstraintValidator implements ConstraintValidator<CourseCode, String> {
+
+    private String coursePrefix;
+
+    @Override
+    public void initialize(CourseCode courseCode) {
+        this.coursePrefix = courseCode.value();
+    }
+
+    @Override
+    // userInput = that's the user input that we want to validate
+    // constraintValidatorContext = we can add additional error messages here
+    public boolean isValid(String userInput, ConstraintValidatorContext constraintValidatorContext) {
+        return userInput.startsWith(this.coursePrefix);
+    }
+}
+
+```
+
+3. Add validation rule to customer class
+
+## Section 18: Introduction to Hibernate
+A framework for persisting / saving java objects in a database
+
+your java app -> hibernate -> database
+
+```java
+// Create java object
+Student student = new Student("John", "Doe", "john@luv2code.com");
+
+// Save it to database
+int theId = (Integer) session.save(student);
+
+// Retrieve from database using the primary key
+Student myStudent = session.get(Student.class, theId);
+
+// Querying for java objects
+Query query = session.createQuery("from Student");
+
+List<Student> students = query.list();
+```
+
+### Benefits of hibernate
+- Hibernate handles all of the low-level SQL
+- Minimizes the amount of JDBC code you have to develop
+- Hibernate provides the Object-to-Relational Mapping (ORM)
+
+### Hibernate and JDBC
+Hibernate uses JDBC for all database communications. In the background, Hibernate will do all the low level JDBC works.

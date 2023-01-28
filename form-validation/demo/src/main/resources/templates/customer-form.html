@@ -16,6 +16,18 @@
         <input type="text" name="lastName" placeholder="What's your last name?">
         <small th:if="${error}" style="color: red;">is required</small>
         <br>
+        <label>Free passes (*): </label>
+        <input type="text" name="freePasses">
+        <small th:if="${error}" style="color: red;">is required</small>
+        <br>
+        <label>Postal code (*): </label>
+        <input type="text" name="postalCode">
+        <small th:if="${error}" style="color: red;">is required</small>
+        <br>
+        <label>Course code (*): </label>
+        <input type="text" name="courseCode">
+        <small th:if="${error}" style="color: red;">is required</small>
+        <br>
         <button type="submit">Submit</button>
     </form>
 </body>
