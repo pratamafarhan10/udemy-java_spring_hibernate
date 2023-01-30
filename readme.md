@@ -656,3 +656,186 @@ List<Student> students = query.list();
 
 ### Hibernate and JDBC
 Hibernate uses JDBC for all database communications. In the background, Hibernate will do all the low level JDBC works.
+
+## Section 20: Hibernate Configuration with Annotations
+To do list:
+1. Add hibernate configuration file
+2. Annotate java class
+3. Develop java code to perform database operations
+
+### Annotate java class
+
+Terminology:
+
+Entity Class, java class that is mapped to a database table. it's just a plain old java class with a field and setter method.
+
+Two options for mapping:
+1. XML config file (legacy)
+2. Java annotations (modern, preferred)
+
+#### Java annotations
+1. Map class to database table
+
+```java
+@Entity
+@Table(name="student")
+public class Student{
+    // ...
+}
+```
+
+2. Map fields to database columns
+
+```java
+@Entity
+@Table(name="student")
+public class Student{
+    
+    @Id
+    @Column(name="id")
+    private int id;
+
+    @Column(name="first_name")
+    private String firstName;
+}
+```
+
+## Section 21: Hibernate CRUD Features: Create, Read, Update and Delete
+
+Two key players:
+- SessionFactory: Reads the hibernate config file, creates session objects, heavy-weight object, only created once in your app
+- Wraps a JDBC connection, main object used to save/retrieve objects, short-lived object, retrieved from SessionFactory
+
+### Primary key
+A uniquely identifies each row in a table, must be a unique value, and cannot contain NULL values.
+
+```java
+@Entity
+@Table(name="student")
+public class Student{
+    
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="id")
+    private int id;
+}
+```
+
+@GenerationType: Let MySQL to handle the generation AUTO_INCREMENT
+
+Other generation types:
+
+| Name                    |                                 Description                                 |
+| ----------------------- | :-------------------------------------------------------------------------: |
+| GenerationType.AUTO     |          Pick an appropriate strategy for the particular database           |
+| GenerationType.IDENTITY |             Assign primary keys using database identity column              |
+| GenerationType.SEQUENCE |                Assign primary keys using a database sequence                |
+| GenerationType.TABLE    | Assign primary keys using an underlying database table to ensure uniqueness |
+
+You can define your own CUSTOM generation strategy if your company needs it
+
+- Create the implementation of org.hibernate.id.IdentifierGenerator
+- Override the method: public Seriazable generate(...) to add your custom business logic
+
+WARNING:
+1. Your generator ALWAYS generate unique value
+2. It works fine in high-volume, multi-threaded environment
+3. If using server clusters, always generate unique value
+
+### Hibernate query language
+When use @Query annotations you refer to the class name not the table name. Example
+
+```java
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Integer>{
+    
+    @Query("SELECT s FROM Student s WHERE s.lastName = :lastName")
+    public List<Student> findStudentWithLastName(@Param("lastName") String lastName);
+}
+```
+
+Student refers to the student object
+
+lastName refers to the field name in the student object
+
+## Section 22: Hibernate Advanced Mappings
+
+- One-to-One mapping
+- One-to-Many mapping
+- Many-to-Many mapping
+
+### Database concept
+
+Primary key: Identify unique row in a table
+
+Foreign key: link tables together, a field in one table that refers to primary key in another table
+
+Cascade: You can cascade operations, apply the same operations to related entities. For example when we delete the instructor, we should also delete their instructor_detail
+
+Fetch types: Eager vs Lazy Loading
+- Eager: will retrieve everything
+- Lazy: will retrieve on request
+
+Uni directional: When you access instructor you can get data from instructor detail
+
+Bi-directional: You can access data from both table (instructor to instructor detail or instructor detail to instructor)
+
+## Section 23: Hibernate Advanced Mappings - @OneToOne
+
+Development process:
+1. Prep work - define database tables
+2. Create InstructorDetail class
+3. Create Instructor class
+4. Create main app
+
+### Entity lifecycle
+
+| Operations |                                   Description                                   |
+| ---------- | :-----------------------------------------------------------------------------: |
+| Detach     |      If entity is detached, it is not associated with a hibernate session       |
+| Merge      |    If instance is detached from session, then merge will reattach to session    |
+| Persist    |  Transitions new instances to managed state. Next flush/commit will save in db  |
+| Remove     | Transitions managed entity to be removed. Next flush/commit will delete from db |
+| Refresh    |            Reload/sync object with data from db. Prevents stale data            |
+
+### @OneToOne - cascade types
+
+| Cascade type |                                         Description                                         |
+| ------------ | :-----------------------------------------------------------------------------------------: |
+| Persist      |             If entity is persisted/saved, related entity will also be persisted             |
+| Remove       |              If entity is removed/deleted, related entity will also be deleted              |
+| Refresh      |                If entity is refreshed, related entity will also be refreshed                |
+| Detach       | If entity is detached (not associated w/session), then related entity will also be detached |
+| Merge        |                If entity is merged, then related entity will also be merged                 |
+| All          |                               All of the above cascade types                                |
+
+
+### Configure cascade type
+
+```java
+@Entity
+@Table(name="instructor")
+public class Instructor {
+    // ...
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="instructor_detail_id")
+    private InstructorDetail instructorDetail;
+
+    // ...
+}
+```
+
+**By default, no operations are cascaded. So we have to define it by ourself**
+
+Configure multiple cascade types
+
+```java
+@OneToOne(cascade={
+    CascadeType.DETACH,
+    CascadeType.MERGE,
+    CascadeType.PERSIST,
+    CascadeType.REFRESH,
+    CascadeType.REMOVE
+})
+```
