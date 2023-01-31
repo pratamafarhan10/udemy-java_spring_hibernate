@@ -1,4 +1,4 @@
-package hibernate.advancedmapping.instructor.dto;
+package hibernate.onetooneuni.instructor.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

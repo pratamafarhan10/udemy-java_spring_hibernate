@@ -839,3 +839,32 @@ Configure multiple cascade types
     CascadeType.REMOVE
 })
 ```
+
+### Bi-directional
+
+Development process:
+1. Make updates to InstructorDetail class:
+   1. Add new field to reference Instructor
+   2. Add getter/setter methods for Instructor
+   3. Add @OneToOne annotation
+2. Create main app
+
+```java
+@Entity
+@Table(name="instructor_detail")
+public class InstructorDetail {
+    @OneToOne(mappedBy="instructorDetail", cascade=CascadeType.ALL)
+    private Instructor instructor;
+
+    // setter/getter for instructor
+}
+```
+
+mappedBy: Refers to "instructorDetail" **PROPERTY IN** "instructor" **CLASS**
+
+#### mappedBy
+
+mappedBy tells hibernate:
+- Look at the instructorDetail property in the Instructor class
+- Use information from the Instructor class @JoinColumn
+- To help find associated instructor

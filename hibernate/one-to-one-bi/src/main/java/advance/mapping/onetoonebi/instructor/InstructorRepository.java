@@ -1,11 +1,11 @@
-package hibernate.advancedmapping.instructor;
+package advance.mapping.onetoonebi.instructor;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import hibernate.advancedmapping.instructor.dto.Instructor;
+import advance.mapping.onetoonebi.instructor.dto.Instructor;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Integer>{
