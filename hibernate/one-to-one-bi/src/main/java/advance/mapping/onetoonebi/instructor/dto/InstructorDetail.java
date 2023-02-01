@@ -1,5 +1,6 @@
 package advance.mapping.onetoonebi.instructor.dto;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,8 @@ public class InstructorDetail {
     @Column(name = "hobby")
     private String hobby;
 
-    @OneToOne(mappedBy = "instructorDetail")
+    // @OneToOne(mappedBy = "instructorDetail", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "instructorDetail", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Instructor instructor;
 
     public InstructorDetail(String youtubeChannel, String hobby) {
@@ -70,7 +72,7 @@ public class InstructorDetail {
             " id='" + getId() + "'" +
             ", youtubeChannel='" + getYoutubeChannel() + "'" +
             ", hobby='" + getHobby() + "'" +
-            ", instructor='" + getInstructor() + "'" +
+            ", instructor='" + (getInstructor() == null ? null : getInstructor().getId()) + "'" +
             "}";
     }
 

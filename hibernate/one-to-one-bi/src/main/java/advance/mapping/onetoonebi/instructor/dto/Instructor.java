@@ -88,7 +88,7 @@ public class Instructor {
                 ", firstName='" + getFirstName() + "'" +
                 ", lastName='" + getLastName() + "'" +
                 ", email='" + getEmail() + "'" +
-                ", instructorDetail='" + getInstructorDetail() + "'" +
+                ", instructorDetail='" + (getInstructorDetail() == null ? null : getInstructorDetail().getId()) + "'" +
                 "}";
     }
 

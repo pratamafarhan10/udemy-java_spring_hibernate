@@ -868,3 +868,12 @@ mappedBy tells hibernate:
 - Look at the instructorDetail property in the Instructor class
 - Use information from the Instructor class @JoinColumn
 - To help find associated instructor
+
+### NOTES
+Owned entity: the table that have the foreign key
+Parent entity: the table that have the id referenced
+
+- Ideally you want to save your data from the owned entity to save the foreign key from the parent entity
+- If you want to save the data from the parent entity you can do it. BUT, you have to set the referenced entity in the owned entity, so when you save it, the owned entity store the foreign key as well. IF YOU DON'T DO IT THEN THE OWNED ENTITY WILL NOT STORE THE FOREIGN KEY, BUT THE PARENT ENTITY WILL SAVE THE REFERENCE TO THE ID (THIS ONLY HAPPEN ON SPRING APP BECAUSE OF FLUSH/COMMIT)
+- If you want to delete the parent entity but don't want to delete the weak entity then you have to DEREFERENCE your parent entity in your owned entity
+- ONCE your object PERSISTED into the database, then IF you MODIFY it, it will MODIFY it on the database too

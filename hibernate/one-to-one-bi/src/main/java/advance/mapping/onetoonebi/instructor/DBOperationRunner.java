@@ -35,6 +35,8 @@ public class DBOperationRunner implements CommandLineRunner {
         Instructor instructor2= new Instructor("paul", "walker", "paulwalker@gmail.com");
         instructor2.setInstructorDetail(new InstructorDetail("luv2code", "drive"));
 
+        
+
         // Note: this will ALSO save the instructor details object
         // because of CascadeType.ALL
         Instructor save1 = instructorRepository.save(instructor1);
@@ -49,9 +51,28 @@ public class DBOperationRunner implements CommandLineRunner {
         System.out.println("Delete instructor from instructor table");
         instructorRepository.deleteById(1);
 
+        // Bi-directional
+
+        System.out.println("======== Get data from the weak instructor_detail");
+        InstructorDetail thirdInstructorDetail = new InstructorDetail("windah basudara", "livestream");
+        Instructor windah = new Instructor("windah", "basudara", "windahbasudara@gmail.com");
+        
+        thirdInstructorDetail.setInstructor(windah);
+        // thirdInstructorDetail.getInstructor().setInstructorDetail(thirdInstructorDetail);
+        thirdInstructorDetail = instructorDetailRepository.save(thirdInstructorDetail);
+
         System.out.println("Get data from instructor_detail");
-        Optional<InstructorDetail> data2 = instructorDetailRepository.findById(2);
-        System.out.println("\t" + (data2.isPresent() ? data2.get() : "No data found"));
+        Optional<InstructorDetail> data3 = instructorDetailRepository.findById(3);
+        System.out.println("\t" + (data3.isPresent() ? data3.get() : "No data found"));
+
+        System.out.println("======== Delete data from the weak instructor_detail");
+        thirdInstructorDetail.getInstructor().setInstructorDetail(null);
+        instructorDetailRepository.deleteById(3);
+
+        System.out.println("======== Set new instructor detail to windah basudara");
+        InstructorDetail newInstructorDetail = new InstructorDetail("drake channel", "singing");
+        windah.setInstructorDetail(newInstructorDetail);
+
     }
 }
 
