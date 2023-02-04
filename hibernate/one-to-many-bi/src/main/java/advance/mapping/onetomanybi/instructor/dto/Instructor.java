@@ -95,6 +95,10 @@ public class Instructor {
         course.setInstructor(this);
     }
 
+    public void deleteCourse(Course course){
+        this.courses.remove(course);
+    }
+
     @Override
     public String toString() {
         return "{" +

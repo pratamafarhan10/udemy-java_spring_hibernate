@@ -875,7 +875,7 @@ Parent entity: the table that have the id referenced
 
 - Ideally you want to save your data from the owned entity to save the foreign key from the parent entity
 - If you want to save the data from the parent entity you can do it. BUT, you have to set the referenced entity in the owned entity, so when you save it, the owned entity store the foreign key as well. IF YOU DON'T DO IT THEN THE OWNED ENTITY WILL NOT STORE THE FOREIGN KEY, BUT THE PARENT ENTITY WILL SAVE THE REFERENCE TO THE ID (THIS ONLY HAPPEN ON SPRING APP  BECAUSE OF FLUSH/COMMIT)
-- If you want to delete the parent entity but don't want to delete the weak entity then you have to DEREFERENCE your parent entity in your owned entity
+- If you want to delete the parent entity but don't want to delete the weak entity then you have to DEREFERENCE your parent entity in your owned entity (ONLY USE IT YOU HAVE AN OBJECT ATTACHED ALREADY)
 - ONCE your object PERSISTED into the database, then IF you MODIFY it, it will MODIFY it on the database too
 
 ## Section 24: Hibernate Advanced Mappings - @OneToMany
@@ -885,3 +885,45 @@ Development process:
 2. Create course class
 3. Update instructor class
 4. Create main app
+
+## Section 25: Hibernate Advanced Mappings - Eager vs Lazy Loading
+When we fetch/retrieve data, should we retrieve everything?
+- Eager will retrieve everything
+- Lazy will retrieve on request
+
+### Best practice
+Only load data when absolutely needed. Prefer lazy loading instead of eager loading
+
+### Eager loading
+Eager loading will load all dependent entities. Load instructor and all of their courses at once. It may not be a big deal if you have a small number of data. But if you have large amount of data, it can impact the performance.
+
+### Lazy loading
+Lazy loading will load the main entity first then load the dependet entities on demand (lazy).
+
+When we do lazy load, the data is only retrieved on demand. However, this requires an open Hibernate session and need a connection to database to retrieve data.
+
+If the hibernate session is closed, and we attempt to retrieve lazy data, **Hibernate will throw an exception**.
+
+Retrieve lazy data using
+- Option 1: session.get and call appropriate getter method(s)
+- Option 2: Hibernate query with HQL
+
+### Fetch type
+When we define the mapping relationship, we can specify the fetch type: EAGER/LAZY
+
+```java
+@Entity
+@Table(name="instructor")
+public class Instructor{
+    @OneToMany(fetch=FetchType.LAZY, mappedBy="instructor")
+    private List<Courses> courses;
+}
+```
+
+Default fetch type
+| Mapping     | Default fetch type |
+| ----------- | :----------------: |
+| @OneToOne   |  FetchType.Eager   |
+| @OneToMany  |   FetchType.LAZY   |
+| @ManyToOne  |  FetchType.Eager   |
+| @ManyToMany |   FetchType.LAZY   |

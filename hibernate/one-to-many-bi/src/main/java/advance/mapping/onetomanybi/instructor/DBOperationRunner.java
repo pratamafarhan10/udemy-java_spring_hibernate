@@ -38,8 +38,8 @@ public class DBOperationRunner implements CommandLineRunner {
         InstructorDetail windahDetail = new InstructorDetail("windah basudara", "livestreaming");
         windahDetail.setInstructor(windah);
         windah.setInstructorDetail(windahDetail);
-        Course javaCourse = new Course("Java course", windah);
-        Course golangCourse = new Course("Golang course", windah);
+        Course javaCourse = new Course("Java course");
+        Course golangCourse = new Course("Golang course");
 
         windah.addCourse(javaCourse);
         windah.addCourse(golangCourse);
@@ -52,5 +52,12 @@ public class DBOperationRunner implements CommandLineRunner {
         System.out.println(windahFromDB);
         System.out.println(windahFromDB.getInstructorDetail());
         windahFromDB.getCourses().stream().forEach(course -> System.out.println(course));
+
+        System.out.println("\n======== Delete data from database.....");
+        windah.deleteCourse(golangCourse);
+        golangCourse.setInstructor(null);
+        courseRepository.deleteById(2);
+//        courseRepository.deleteById(1);
+//        windah.getCourses().stream().forEach(course -> System.out.println(course));
     }
 }
