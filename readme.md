@@ -874,8 +874,8 @@ Owned entity: the table that have the foreign key
 Parent entity: the table that have the id referenced
 
 - Ideally you want to save your data from the owned entity to save the foreign key from the parent entity
-- If you want to save the data from the parent entity you can do it. BUT, you have to set the referenced entity in the owned entity, so when you save it, the owned entity store the foreign key as well. IF YOU DON'T DO IT THEN THE OWNED ENTITY WILL NOT STORE THE FOREIGN KEY, BUT THE PARENT ENTITY WILL SAVE THE REFERENCE TO THE ID (THIS ONLY HAPPEN ON SPRING APP  BECAUSE OF FLUSH/COMMIT)
-- If you want to delete the parent entity but don't want to delete the weak entity then you have to DEREFERENCE your parent entity in your owned entity (ONLY USE IT YOU HAVE AN OBJECT ATTACHED ALREADY)
+- If you want to save the data from the parent entity you can do it. BUT, you have to set the referenced entity in the owned entity, so when you save it, the owned entity store the foreign key as well. IF YOU DON'T DO IT THEN THE OWNED ENTITY WILL NOT STORE THE FOREIGN KEY, BUT THE PARENT ENTITY WILL SAVE THE REFERENCE TO THE ID (THIS ONLY HAPPEN ON SPRING APP BECAUSE OF FLUSH/COMMIT)
+- If you want to delete the parent entity but don't want to delete the weak entity then you have to DEREFERENCE your parent entity in your owned entity (ONLY USE IT YOU HAVE AN OBJECT PERSISTED ALREADY)
 - ONCE your object PERSISTED into the database, then IF you MODIFY it, it will MODIFY it on the database too
 
 ## Section 24: Hibernate Advanced Mappings - @OneToMany
@@ -908,6 +908,10 @@ Retrieve lazy data using
 - Option 1: session.get and call appropriate getter method(s)
 - Option 2: Hibernate query with HQL
 
+How to resolve the hibernate exception when we retrieve data after the session closed:
+- Option 1: call the getter method while session is open
+- Option 2: load all the courses using hibernate query (HQL)
+
 ### Fetch type
 When we define the mapping relationship, we can specify the fetch type: EAGER/LAZY
 
@@ -927,3 +931,55 @@ Default fetch type
 | @OneToMany  |   FetchType.LAZY   |
 | @ManyToOne  |  FetchType.Eager   |
 | @ManyToMany |   FetchType.LAZY   |
+
+## Section 26: Hibernate Advanced Mappings - @OneToMany - Unidirectional
+A course can have many reviews. The relation is uni-directional. If you delete a course, also delete the reviews. Because reviews without a course have no meaning.
+
+Development process:
+1. Define database table
+2. Create review class
+3. Update course class
+4. Create main app
+
+## Section 27: Hibernate Advanced Mappings - @ManyToMany
+A table that provides a mapping between two tables. It has foreign keys for each table to define the mapping relationship.
+
+Development process:
+1. Define database tables
+2. Update course class
+3. Update student class
+4. Create main app
+
+```java
+@Entity
+@Table(name = "course")
+public class Course{
+    @ManyToMany
+    @JoinTable(
+        name = "course_student"
+        joinColumns = @JoinColumn(name = "course_id")
+        inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<Student> students;
+}
+```
+
+@JoinTable tells hibernate
+- Look at the **course_id** columnt at the **course_student** table
+- For other side (inverse), look at the student_id column in the **course_student** table
+- Hibernate will use this information to find relationship between **course** and **student**
+
+More on inverse:
+- In this context, we are defining the relationship in **Course** class
+- The **Student** class is on the "other side", so it is considered the "inverse"
+- "Inverse" refers to the "other side" of the relationship
+
+### Notes
+We have 3 tables:
+- course
+- student
+- course_student
+
+Notes **WHEN YOU HAVE A TRUNCATE QUERY BEFORE RUNNING ALL THE CODE**:
+1. We can only set the relationship from 1 entity only. Example, course set students/student set courses. If we set it on both objects, then we can get constraint error.
+2. Depends from what object do you save the data to the database, you can only get the data from the entity that you saved. Example, when you save the data through course entity, then you have to retrieve the course entity to get the complete data. If you try to retrieve it from student, then you will get null courses. (THIS ONLY HAPPEN WHEN YOU HAVE A PERSISTED OBJECT BEFORE IT)

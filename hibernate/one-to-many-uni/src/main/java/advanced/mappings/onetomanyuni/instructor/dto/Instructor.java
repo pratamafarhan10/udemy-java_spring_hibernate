@@ -1,4 +1,4 @@
-package loading.eagervslazy.instructor.dto;
+package advanced.mappings.onetomanyuni.instructor.dto;
 
 import lombok.*;
 
@@ -57,6 +57,5 @@ public class Instructor {
         this.courses.remove(course);
     }
 }
-
 
 

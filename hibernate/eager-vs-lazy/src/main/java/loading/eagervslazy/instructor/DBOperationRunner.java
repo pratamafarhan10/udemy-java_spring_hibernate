@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Component
 public class DBOperationRunner implements CommandLineRunner {
@@ -44,6 +45,13 @@ public class DBOperationRunner implements CommandLineRunner {
         windah.addCourse(java, golang, php);
 
         instructorRepository.save(windah);
+
+        // Get data from database
+        System.out.println("\nRetrieve data from database...");
+        Optional<Instructor> windahFromDB = instructorRepository.findById(1);
+        if (windahFromDB.isPresent()){
+            windahFromDB.get().getCourses().forEach(System.out::println);
+        }
 
     }
 }

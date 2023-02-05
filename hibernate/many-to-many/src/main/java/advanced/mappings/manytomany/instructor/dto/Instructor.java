@@ -1,6 +1,8 @@
-package loading.eagervslazy.instructor.dto;
+package advanced.mappings.manytomany.instructor.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -57,6 +59,5 @@ public class Instructor {
         this.courses.remove(course);
     }
 }
-
 
 
