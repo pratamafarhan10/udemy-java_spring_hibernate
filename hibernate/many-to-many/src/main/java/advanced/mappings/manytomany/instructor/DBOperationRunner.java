@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -42,7 +43,7 @@ public class DBOperationRunner implements CommandLineRunner {
 
         System.out.println("\nSaving data into the database...");
         // Create new course
-        Course javaCourse = new Course("Java complete bootcamps");
+        Course javaCourse = new Course("Java complete bootcamp");
 
         // Create new students
         Student windah = new Student("Windah", "Basudara", "windahbasudara@gmail.com");
@@ -75,12 +76,23 @@ public class DBOperationRunner implements CommandLineRunner {
         }
 
         // Create more course
-        Course golang = new Course("Web development with Golangs");
+        Course golang = new Course("Web development with Golang");
 
         // Save new students to new course
+        // windah.addCourses(golang);
+        // john.addCourses(golang);
         golang.addStudents(windah, john);
 
         // Save new course to the database
+        // studentRepository.saveAll(List.of(windah, john));
         courseRepository.save(golang);
+
+        System.out.println("\nDelete data from the database...");
+        // courseRepository.delete(javaCourse);
+        courseRepository.deleteById(1);
+
+        // Can only be deleted if we don't have any truncate operations above
+        studentRepository.delete(windah);
+
     }
 }
