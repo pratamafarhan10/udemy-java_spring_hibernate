@@ -320,7 +320,17 @@ public class TennisCoach implements Coach{
 Used when there are multiple implementation of an interface. We need to tell specific bean to use. It can be use to any injection types.
 
 ```java
-@Qualifier("happyFortuneService")
+@Component
+public class TennisCoach implements Coach{
+    private FortuneService fortuneService;
+    
+    public TennisCoach(){}
+
+    @Autowired
+    public void setFortuneService(@Qualifier("fortuneService") FortuneService fortuneService){
+        this.fortuneService = fortuneService;
+    }
+}
 ```
 
 Specified the bean ID that we want to use
@@ -983,3 +993,134 @@ We have 3 tables:
 Notes **WHEN YOU HAVE A TRUNCATE QUERY BEFORE RUNNING ALL THE CODE**:
 1. We can only set the relationship from 1 entity only. Example, course set students/student set courses. If we set it on both objects, then we can get constraint error.
 2. Depends from what object do you save the data to the database, you can only get the data from the entity that you saved. Example, when you save the data through course entity, then you have to retrieve the course entity to get the complete data. If you try to retrieve it from student, then you will get null courses. (THIS ONLY HAPPEN WHEN YOU HAVE A PERSISTED OBJECT BEFORE IT)
+
+## Section 28-33: Build a Database Web App - Spring MVC and Hibernate Project
+
+### @Transactional annotation
+Spring will provide session.beginTransaction() and session.commit();
+
+### @Repository annotation
+Spring will provide transalation for any JDBC related exceptions
+
+### @RequestMapping
+request mapping receive all methods (GET, POST, PUT, etc), if we want to constraint the request mapping then we have to specify it
+
+```java
+@RequestMapping(path="/processForm", method=RequestMethod.GET)
+```
+
+## Section 34: AOP: Aspect-Oriented Programming Overview
+
+Aspect-oriented programming is a programming technique based on concept of an aspect. An aspect encapsulates **cross-cutting logic** or **cross-cutting concern**. Concern means logic/functionality. It's like a basic infrastructure code that all applications would need.
+
+Before:
+1. If we need logging or security, we add them into our class one by one
+2. This is not scalable, when we have to add new functionality/methods, we have to add the log or security manually. Or, if we want to modify the logging or security, then we have to modify it to all of our class
+
+After:
+1. Using cross-cutting concerns is we take that logging code and encapsulate it into a reusable module or class and then we can have that code be called when we make appropriate calls to our controller, service, etc
+
+So an aspects is:
+- Aspect can be reused at multiple location
+- Same aspect/class can be applied based on configuration'
+
+### AOP Solution
+Apply the proxy design pattern. For example, we have a main application that call a method in our target object. The main application has no idea about AOP or any aspects or proxy.
+
+Main App -> AOP Proxy (logging/security aspect) -> target object
+
+#### AOP frameworks for java
+##### Spring AOP
+Spring provides AOP support. It is build within spring like security, transaction, caching, etc. It uses run-time weaving of aspect.
+
+Advantages
+1. Simpler to use than AspectJ
+2. Uses proxy pattern
+3. Can migrate to AspectJ when using @Aspect annotation
+
+Disadvantages
+1. Only supports method-level join points
+2. Can only be applied to aspects to beans created by the spring apps context
+3. Minor performance cost for aspect execution (run-time weaving)
+
+##### AspectJ
+The original AOP framework, released in 2001. Provides complete support of AOP, rich support of:
+- Join points: method-level, constructor, field
+- Code weaving: compile-time, post compile-time, and load-time
+
+Advantages
+1. Support all join points
+2. Works with any POJO, not just beans from app context
+3. Faster performance compared to spring AOP
+4. Complete AOP support
+
+Disadvantages
+1. Compile-time weaving requires extra compilation steps
+2. AspectJ pointcut syntax can become complex
+
+##### Comparing spring AOP and AspectJ
+- Spring AOP is the lightweight implementation of AOP
+- Solves common problems in enterprise applications
+- Recommended to start with Spring AOP since it is easy to get started with. Unless, you ahve complex requirement then move to aspectJ
+
+### Benefits of AOP
+- Code for aspect is defined in a single class
+  - Much better than being scattered everywhere
+  - Promotes code reuse and easier to change
+- Business code in your application is cleaner
+  - Only applies to business functionality: addAccount
+  - Reduces code complexity
+- Configurable
+  - Based on configuration, apply aspects selectively to different parts of app
+  - No need to make changes to main application code!
+
+### Use cases
+- Most common
+  - logging, security, transactions
+- Audit logging
+  - who, what, when, where
+- Exception handling
+  - log exception and notify DevOps team via SMS/email
+- API Management
+  - how many times has a method been called by the user
+  - analytics: what are peak times? what is average load? who is top user
+
+### Advantages and disadvantages
+Advantages:
+- Reusable modules
+- Resolve code tangling
+- Resolve code scatter
+- Applide selectively based on configuration
+
+Disadvantages:
+- Too many aspects and app flow is hard to follow
+- Minor performance cost for aspect execution (run-time weaving)
+
+### AOP terminology
+- Aspect: module of code for a cross cutting concern (logging, security, ...)
+- Advice: what action is taken and when it should be applied
+- Joint point: when to apply code during program execution
+- Pointcut: a predicate expression for where advice should be applied
+
+#### Advice types
+- Before advice: run before the method gets called
+- After finally advice: run after the method gets called (like a finally block in a try catch)
+- After returning advice: run after the method has been called successfully (success execution)
+- After throwing advice: run after the method has been called if an exception get thrown
+- Around advice: run before and after method
+
+#### Weaving
+Connecting aspects to target objects to create an adviced object
+
+Differnt type of weaving:
+- Compile time
+- Load time
+- Run time
+
+Regarding performance, run time is the slowest
+
+#### Our Spring AOP roadmap
+1. Create **aspects**
+2. Develop **advices** (before, after returning, after throwing, after finally, around)
+3. Create **pointcut** expression
+4. Apply it to our big CRM project (Spring MVC + Hibernate)

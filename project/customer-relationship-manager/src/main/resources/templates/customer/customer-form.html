@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer form</title>
+
+  <link rel="stylesheet" th:href="@{/add-customer-style.css}">
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+  <div id="wrapper">
+    <div id="header">
+      <h2>CRM - Customer Relationship Manager</h2>
+    </div>
+  </div>
+
+  <div id="container">
+    <h3>Save customer</h3>
+
+    <form action="/customer/save" method="post">
+      <table>
+        <tbody>
+        <input th:if="${customer != null}" type="hidden" name="id" id="id" th:value="${customer.id}">
+          <tr>
+            <td>
+              <label for="firstName">First name:</label>
+            </td>
+            <td>
+              <input type="text" name="firstName" id="firstName" th:value="${customer?.firstName}">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="lastName">last name:</label>
+            </td>
+            <td>
+              <input type="text" name="lastName" id="lastName" th:value="${customer?.lastName}">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="email">Email:</label>
+            </td>
+            <td>
+              <input type="text" name="email" id="email" th:value="${customer?.email}">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label></label>
+            </td>
+            <td>
+              <button type="submit" class="save">Save</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+
+    <br>
+    <a href="/customer/list">Back to list</a>
+  </div>
+</body>
+</html>
