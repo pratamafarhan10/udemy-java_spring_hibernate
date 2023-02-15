@@ -1119,8 +1119,97 @@ Differnt type of weaving:
 
 Regarding performance, run time is the slowest
 
-#### Our Spring AOP roadmap
+### Our Spring AOP roadmap
 1. Create **aspects**
 2. Develop **advices** (before, after returning, after throwing, after finally, around)
 3. Create **pointcut** expression
 4. Apply it to our big CRM project (Spring MVC + Hibernate)
+
+## Section 35: AOP: @Before Advice Type
+Development process:
+1. Create target object: AccountDAO
+
+```java
+@Component
+public class AccountDAO {
+    public void addAccount(){
+        System.out.println("doing my db work: adding my account");
+    }
+}
+```
+
+2. Create spring java config class
+
+```java
+@Configuration
+@EnableAspectJAutoProxy
+@ComponentScan("com.luv2code.aopdemo")
+public class DemoConfig{
+
+}
+```
+
+3. Create main app
+4. Create an aspect with @Before advice
+
+```java
+@Aspect
+@Component
+public class MyDemoLoggingAspect {
+    // A pointcut expression
+    @Before("execution(public void addAccount())")
+    public void beforeAddAccountAdvice(){
+        // Add our custom code logging, security, etc
+    }
+}
+```
+Run this code before - target object method: "public void addAccount()"
+
+Best practices:
+- Keep the code small
+- Keep the code fast
+- Do not perform any expensive/slow operations
+- Get in and out as quickly as possible
+
+## Section 36: AOP: Pointcut Expressions - Match Methods and Return Types
+Pointcut expression language
+
+
+### Execution
+```text
+execution(modifiers-pattern? return-type-pattern declaring-type-pattern? method-name-pattern(param-pattern) throws-pattern?)
+```
+The pattern is optional if it has "?". Example
+
+- Match on method names
+
+Match only addAccount() method in AccountDAO class
+
+```java
+@Before("execution(public void com.luv2code.aopdemo.dao.AccountDAO.addAccount())")
+```
+
+- Match any addAccount() method in any class
+
+```java
+@Before("execution(public void addAccount())")
+```
+
+- Match on method names (using wildcards)
+
+Match on methods **starting** with **add** in any class
+```java
+@Before("execution(public void add*())")
+```
+
+- Use wildcards on any return type
+
+```java
+@Before("execution(public * processCreditCard*())")
+```
+
+- Modifier is optional so we don't have to list it
+
+```java
+@Before("execution(* processCreditCard*())")
+```
