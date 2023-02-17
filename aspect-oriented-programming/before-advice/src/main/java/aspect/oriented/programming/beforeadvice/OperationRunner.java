@@ -19,6 +19,9 @@ public class OperationRunner implements CommandLineRunner {
         this.account.addAccount();
         this.membership.addSillyMember();
         System.out.println(this.account.addAccountSuccessful());
+        this.account.addAccount("pop smoke");
+        this.account.addAccount(new Account("travis scott"));
+        this.account.addAccount("john", "doe");
 
         System.out.println("\nLet's call it again");
         this.account.addAccount();
