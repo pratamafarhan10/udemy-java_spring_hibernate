@@ -16,12 +16,14 @@ public class OperationRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("\n===== Operation Runner ====");
+        Account windah = new Account("windah");
         this.account.addAccount();
         this.membership.addSillyMember();
-        System.out.println(this.account.addAccountSuccessful());
-        this.account.addAccount("pop smoke");
+        System.out.println(this.account.addAccountSuccessful() + "\n");
+        this.account.addAccount(windah.getName());
         this.account.addAccount(new Account("travis scott"));
         this.account.addAccount("john", "doe");
+        this.account.deleteAccount(new Account("Drake"));
 
         System.out.println("\nLet's call it again");
         this.account.addAccount();

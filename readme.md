@@ -1219,3 +1219,64 @@ Parameter pattern widlcards
 - (): matches a method with no arguments
 - (*): matches a method with one argument of any type
 - (..): matchs a method with 0 or more arguments of any type
+
+## Section 38: AOP: Pointcut Declarations
+Problem:
+How can we reuse the same pointcut expression for other advice
+
+Possible solution:
+1. Use the old copy paste method
+2. **Create a pointcut expression once, and apply it to multiple advices**
+
+Reusing pointcut expression
+```java
+@Aspect
+@Component
+public class MyDemoLoggingAspect {
+
+    // A pointcut expression
+    @Pointcut("execution(* com.luv2code.aopdemo.dao.*.*(..))")
+    private void forDaoPackage(){} // name of the pointcut declaration, you can have any name
+
+    @Before("forDaoPackage()")
+    public void beforeAddAccountAdvice(){}
+
+    @Before("forDaoPackage()")
+    public void performAPIAnalytics(){}
+}
+```
+
+Benefits of pointcut declarations
+- Easily reuse pointcut expression
+- Update pointcut in one location
+- Can also share and combine pointcut expressions (coming up later)
+
+Another problem
+- How to apply multiple pointcut expression to single advice?
+- Execute an advice only if certain conditions are met. For example, all methods in a package EXCEPT getter/setter methods
+
+We can combine pointcut expression
+- Combine pointcut expression using logic operators
+  - AND (&&)
+  - OR (||)
+  - NOT (!)
+
+Works like an if statement and execution happens only if it evaluates to true
+```java
+@Before("expressionOne() && expressionTwo()")
+@Before("expressionOne() || expressionTwo()")
+@Before("expressionOne() && !expressionTwo()")
+```
+
+## Section 39: AOP: Ordering Aspects
+How we can controll the order of advices being applied. Imagine we have 3 aspects
+- beforeAddAccountAdvice
+- performAPIAnalytics advice
+- logToCloudAdvice
+
+Base the specification the order of the aspect is undefined, so spring will call the order randomly.
+
+To control order
+- Refactor: place advices in separate aspects
+- Control order on aspects using the @Order annotation
+- Guarantees order of when aspects are applied
