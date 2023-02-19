@@ -1,13 +1,17 @@
 package aspect.oriented.programming.beforeadvice.aspects;
 
+import aspect.oriented.programming.beforeadvice.dto.Account;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class DemoLogging {
+@Order(3)
+public class DemoLoggingAspect {
 //    @Before("execution(public void add*())")
     @Before("execution(* add*())")
     public void beforeAddAccountAdvice(){
@@ -31,36 +35,28 @@ public class DemoLogging {
 
     @Before("execution(* aspect.oriented.programming.beforeadvice.dto.Account.addAccount(String, ..))")
     public void beforeAddAccountWithSpecificMethodInAClassAdvice(){
-        System.out.println("=======>>> @Before advice on addAccount(String firstName, String lastName) with SPECIFIC METHOD IN A CLASS");
+        System.out.println("=======>>> @Before advice on addAccount(String firstName, ...) with SPECIFIC METHOD IN A CLASS");
     }
 
-    @Pointcut("execution(* deleteAccount(aspect.oriented.programming.beforeadvice.dto.Account))")
-    private void deleteAccountPointcut(){}
-
-    @Before("deleteAccountPointcut()")
-    public void peformAPIAnalytics(){
-        System.out.println("=======>>> @Before PERFORM API ANALYTICS ADVICE with a POINTCUT DECLARATIONS");
-    }
-
-    @Before("deleteAccountPointcut()")
-    public void deleteAccountAdvice(){
+    @Before("aspect.oriented.programming.beforeadvice.aspects.AspectUtil.deleteAccountPointcut()")
+    public void deleteAccountAdvice(JoinPoint jointPoint){
         System.out.println("=======>>> @Before DELETE ACCOUNT ADVICE with a POINTCUT DECLARATIONS");
+
+        // Get signature
+        MethodSignature sig = (MethodSignature) jointPoint.getSignature();
+        System.out.println("\tMethod: " + sig);
+        Object[] args = jointPoint.getArgs();
+        System.out.println("\tArguments:");
+        for(Object arg : args){
+            System.out.println("\t" + arg);
+            if (arg instanceof Account){
+                Account theAccount = (Account) arg;
+                System.out.println("\tThe name of the account: " + theAccount.getName());
+            }
+        }
     }
 
-    // Pointcut for all methods in account class
-    @Pointcut("execution(* aspect.oriented.programming.beforeadvice.dto.Account.*(..))")
-    private void accountClassPointcut(){}
-    // Pointcut for getter methods in account class
-    @Pointcut("execution(* aspect.oriented.programming.beforeadvice.dto.Account.get*(..))")
-    private void accountClassGetterPointcut(){}
-    // Pointcut for setter methods in account class
-    @Pointcut("execution(* aspect.oriented.programming.beforeadvice.dto.Account.set*(..))")
-    private void accountClassSetterPointcut(){}
-    // Pointcut for all methods within account class exclude the getter and setter
-    @Pointcut("accountClassPointcut() && !(accountClassGetterPointcut() || accountClassSetterPointcut())")
-    private void accountClassPointcutExcludeGetterAndSetter(){}
-
-    @Before("accountClassPointcutExcludeGetterAndSetter()")
+    @Before("aspect.oriented.programming.beforeadvice.aspects.AspectUtil.accountClassPointcutExcludeGetterAndSetter()")
     public void accountClassAdviceExcludeGetterAndSetter(){
         System.out.println("=======>>> @Before on ACCOUNT CLASS excluding the GETTER and SETTER methods");
     }
