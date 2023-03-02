@@ -1022,7 +1022,7 @@ After:
 
 So an aspects is:
 - Aspect can be reused at multiple location
-- Same aspect/class can be applied based on configuration'
+- Same aspect/class can be applied based on configuration
 
 ### AOP Solution
 Apply the proxy design pattern. For example, we have a main application that call a method in our target object. The main application has no idea about AOP or any aspects or proxy.
@@ -1278,5 +1278,138 @@ Base the specification the order of the aspect is undefined, so spring will call
 
 To control order
 - Refactor: place advices in separate aspects
-- Control order on aspects using the @Order annotation
-- Guarantees order of when aspects are applied
+
+When we call other method in another aspect/class, we have to pass the fully qualified name which is **package name** + **class name**
+
+- Add @Order annotation
+
+Control order on aspects using the @Order annotation
+```java
+@Aspect
+@Component
+@Order(1)
+public class MyCloudLogAspect {}
+```
+
+This guarantees the order of when Aspects are applied. Lower numbers have higher precedence/priority. The range of the number between Integer.MIN_VALUE to Integer.MAX_VALUE. Negative numbers are allowed and it doesn't have to be consecutive. So we can make the order to 0, 9, 17.
+
+What if aspects have the exact same @Order annotation? For example we have the order of 1, 6, 6, and 123. The order at this point is undefined, so spring will run the aspect randomly. But, it will still run **after** 1 and **before** 123
+
+## Section 40: AOP: JoinPoints
+Problem: When we are in an aspect (ie for logging), how we can access method parameters. Just in case if we want to log the params with AOP.
+
+MainDemoApp.java
+```java
+// Call the business method
+Account account = new Account();
+theAccountDAO.addAccount(account, true);
+```
+
+
+1. Access and display method signature
+
+```java
+@Before("...")
+public void beforeAddAccountAdvice(JoinPoint joinPoint){
+    // Display the signature
+    MethodSignature sig = (MethodSignature) joinPoint.getSignature();
+    
+    System.out.println("Method: " + sig);
+}
+```
+The joinPoint has will give us the information about the method that we are actually executing. It has the metadata about our method call.
+
+```shell
+Merthod: void com.luv2code.aopdemo.dao.AccountDAO.addAccount(Account, boolean)
+```
+
+The signature will return the class return type, the qualified name of the class, and the parameters that the method has.
+
+2. Access and display method arguments
+
+```java
+@Before("...")
+public void beforeAddAccountAdvice(JoinPoint jointPoint){
+    // Display method arguments
+
+    // Get args
+    Object[] args = jointPoint.getArgs();
+
+    // Loop through args
+    for (Object arg : args){
+        System.out.println(args);
+    }
+}
+```
+The code above will print out the arguments that the method receives
+```java
+com.luv2code.aopdemo.Account@81234
+true
+```
+
+## Section 41: AOP: @AfterReturning Advice Type
+After returning gives us a chance to write our custom code once we have a successful execution for a given method call with no exceptions
+
+Use case:
+- Most common
+  - Logging, security, transactions
+- Audit logging
+  - who, what, when, where
+- Post processing data
+  - Post process the data before returning to caller
+  - Format the data or enrich the data (really cool but be careful)
+
+Access the return value
+```java
+@AfterReturning(
+    pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+    returning = "result" // Parameter name for return value
+    public void afterRetunringFindAccountsAdvice(JoinPoint joinPoint, List<Account> result){
+        // Print out the result of the method call
+        System.out.println("\n=====>> result is: " + result)
+    }
+)
+```
+
+Modify the return value for **post-processing data**. We want to modify the data before it makes back to the caller.
+
+```java
+@AfterReturning(
+    pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+    returning = "result" // Parameter name for return value
+    public void afterRetunringFindAccountsAdvice(JoinPoint joinPoint, List<Account> result){
+        // Print out the result of the method call
+        if(!result.isEmpty()){
+            Account tempAccount = result.get(0);
+            tempAccount.setName("Daffy duck");
+        }
+    }
+)
+```
+
+## Section 42: AOP: @AfterThrowing Advice Type
+Capture the exception after it got thrown.
+
+Use cases:
+1. Logging the exception
+2. Perform auditing on the exception
+3. Notify DevOps team via email or SMS (use with care, don't spam)
+4. Encapsulate this functionality in AOP aspect for easy reause
+
+
+This advice will run after an exception is thrown
+```java
+@AfterThrowing(
+    pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+    throwing = "exceptionThrown"
+    )
+public void afterThrowingFindAccountsAdvice(JoinPoint joinPoint, Throwable exceptionThrown){
+    System.out.println("Executing @AfterThrowing advice")
+    System.out.println("\n========>> The exception is: " + exceptionThrown)
+}
+```
+
+Exception propagation:
+1. At this point, we are only intercepting the exception (reading it)
+2. However, the exception is still propagated to calling program
+3. If you want to stop the exception propagation then use **@Around** advice
