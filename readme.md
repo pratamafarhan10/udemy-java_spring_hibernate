@@ -1413,3 +1413,22 @@ Exception propagation:
 1. At this point, we are only intercepting the exception (reading it)
 2. However, the exception is still propagated to calling program
 3. If you want to stop the exception propagation then use **@Around** advice
+
+## Section 43: AOP: @After Advice Type
+The advice will run after a method is completed. Regardless of outcome/exceptions success/failure. Works like a finally code in java. If we have both **@AfterThrowing** and **@After**, the @After advice will run first before the @AfterThrowing advice. Like the finally block will execute before the exception get thrown into the calling block
+
+Use cases:
+- Log the exception and/or perform auditing
+- Code to run regardless of method outcome
+- Encapsulate this functionality in AOP aspect for easy reuse
+
+```java
+@After("execution(* com.luv2code.aopdemo.dao.AccoutnDAO.findAccounts(..))")
+public void afterFinallyFindAccountsAdvice(){
+    System.out.println("Executing @After (finally) advice")
+}
+```
+
+Tips:
+- The @After advice does not have access to the exception, if you need exception then use @AfterThrowing advice
+- The @After advice should be able to run in the case of success or error. You should not depend on happy path or an exception. Logging and auditing is the easiest case here
