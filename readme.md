@@ -1432,3 +1432,74 @@ public void afterFinallyFindAccountsAdvice(){
 Tips:
 - The @After advice does not have access to the exception, if you need exception then use @AfterThrowing advice
 - The @After advice should be able to run in the case of success or error. You should not depend on happy path or an exception. Logging and auditing is the easiest case here
+
+## Section 44: AOP: @Around Advice Type
+Run before and after method. Execute before and get the result when that method call is complete. Is like a combination of @Before and @After advice
+
+Use cases:
+-  Most common: logging, security, auditing
+-  Pre-processing and post-processing data
+-  Instrumentation/profiling code. How long does it take for a section of code to run?
+-  Managing exceptions, so we may have a scenario where we don't want to propagate the exception all the way back to the main program. We may wanna swallow/handle/stop exceptions.
+
+ProceedingJoinPoint
+
+When using @Around advice, we will get a reference to a "proceeding join point". This is a handler to the target method. Our code can use the **proceeding join point** to execute **target method**
+
+Code example
+
+```java
+@Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")
+public Object afterGetFortune(ProceedingJoinPoint pjp){
+    // Get begin timestamp
+    long begin = System.currentTimeMillis();
+
+    // Execute the method
+    Object result = pjp.proceed();
+
+    // Get end timestamp
+    long begin = System.currentTimeMillis();
+
+    // Compute the duration
+    long duration = end - begin;
+    System.out.println("\n======>>Duration: " + duration + " miliseconds")
+
+    return result;
+}
+```
+
+### Resolving print order issue
+Root cause:
+- The data is printing to two different output streams
+- Spring is printing to the logger output stream
+- System.out.println is printing to the standard out output stream
+  
+Solution:
+- To have everything in order, you should send to the same output stream
+- We'll change our code to use the logger output stream ..same as Spring
+
+### Handling exceptions
+For an exception thrown from proceeding join point, we can handle/swallow/stop the exception. Or we can simply rethrow the exception. This gives you fine-grained control over how the target method is called. The exception never thrown to the main app, the main app never know about the exception, why? because the exception was handled in @Around advice
+
+```java
+@Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")
+public Object afterGetFortune(ProceedingJoinPoint pjp){
+    Object result = null;
+
+    try {
+        // Let's execute the method
+        result = pjp.proceed();
+    }catch(Exception e){
+        // Log the exception
+        System.out.println("@Around advice: we have a problem " + exc);
+
+        // Handle and give default fortune ... use this approach with caution
+        result = "Nothing exciting here. Move along!"
+    }
+
+    return result;
+}
+```
+
+### Rethrowing the exception
+We can rethrow the exception to the main program just in case the main program want to handle it
